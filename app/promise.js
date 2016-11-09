@@ -4,20 +4,6 @@
 
 "use strict";
 
-function promiseGenerator(id) {
-    return new Promise((resolve, reject) => {
-        var randomNumber = Math.floor(Math.random() * 5);
-        setTimeout(() => {
-            if (randomNumber >= 2) {
-                resolve({id: id, data: randomNumber});
-            } else {
-                reject({id: id, data: randomNumber});
-            }
-            
-        }, randomNumber / 2 * 1000);
-    });
-}
-
 const _Promise = {
 
     all : function (promises) {
@@ -55,41 +41,4 @@ const _Promise = {
     }
 };
 
-var promises = [1, 2, 3].map(promiseGenerator);
-var promises2 = [6, 7, 8].map(promiseGenerator);
-
-
-
-
-
-Promise.race(promises2)
-    .then(succesfulResult => {
-        console.log("Promise.race succeed result", succesfulResult);
-    })
-    .catch(errorResult => {
-        console.log("Promise.race failed result", errorResult);
-    });
-_Promise.race(promises2)
-    .then(successfulResult => {
-        console.log("My_Promise.race succeed result ", successfulResult);
-    })
-    .catch (errorResult => {
-        console.log("My_Promise.race failed result ", errorResult);
-    });
-
-Promise.all(promises)
-    .then(succesfulResult => {
-        console.log("Promise.all succeed result", succesfulResult);
-    })
-    .catch(errorResult => {
-        console.log("Promise.all failed result", errorResult);
-    });
-
-_Promise.all(promises)
-    .then(succesfulResult => {
-        console.log("My_Promise.all succeed result", succesfulResult);
-    })
-    .catch(errorResult => {
-        console.log("My_Promise.all failed result", errorResult);
-    });
-
+module.exports = _Promise;
