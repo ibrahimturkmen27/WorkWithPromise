@@ -6,40 +6,40 @@ const _Promise = require("./../app/promise");
 
 describe("_Promise", () => {
     describe("all", () => {
-        it("should return reject that first element rejected the others resolved ", () => {
+        it("should reject the returned promise when the first promise get's rejected. ", () => {
 
             let promises = [
-                Promise.reject(),
-                Promise.resolve(1),
-                Promise.resolve(2)
+                Promise.reject(1),
+                Promise.resolve(2),
+                Promise.resolve(3)
             ];
 
-            _Promise.all(promises).catch(result => expect(result).toEqual(promises[0]));
+            return _Promise.all(promises).then(() => {}).catch(error => expect(error).toEqual(1));
         });
-        
-        it("should return reject that the second element rejected the others resolved", () => {
+
+        it("should reject the returned promise when the second promise get's rejected. ", () => {
 
             let promises = [
                Promise.resolve(1),
-               Promise.reject(),
-               Promise.resolve(2)
+               Promise.reject(2),
+               Promise.resolve(3)
            ];
 
-            _Promise.all(promises).catch(result => expect(result).toEqual(promises[1]));
+            return _Promise.all(promises).then(() => {}).catch(error => expect(error).toEqual(2));
         });
 
-        it("should return reject that the last element rejected the others resolved", () => {
+        it("should reject the returned promise when the last promise get's rejected. ", () => {
 
             let promises = [
                Promise.resolve(1),
                Promise.resolve(2),
-               Promise.reject()
+               Promise.reject(3)
            ];
 
-            _Promise.all(promises).catch(result => expect(result).toEqual(promises[2]));
+            return _Promise.all(promises).then(() => {}).catch(error => expect(error).toEqual(3));
         });
 
-        it("should return resolve that the all elements resolved ", () => {
+        it("should resolve the returned promise when the all promises get's resolved. ", () => {
 
             let promises = [
                Promise.resolve(1),
@@ -47,133 +47,67 @@ describe("_Promise", () => {
                Promise.resolve(3)
            ];
 
-            _Promise.all(promises).then(result => expect(result).toEqual(promises));
+            return _Promise.all(promises).then(result => expect(result).toEqual([1, 2, 3]));
         });
 
-        it("should return true that the all elements which finishing unequal time resolved and " +
-            "they aligned sequence as same as giving promises array ", () => {
+        it("should resolve the returned promise when the all promises which finishing unequal time resolved and " +
+            "they aligned sequence as same as giving promises array. ", () => {
 
             let promises = [
-                setTimeout(function() {
-                    Promise.resolve(1);
-                }, 3000),
-                setTimeout(function() {
-                    Promise.resolve(2);
-                }, 1000),
-                setTimeout(function() {
-                    Promise.resolve(3);
-                }, 2000)
+                new Promise((resolve) => { setTimeout(() => { resolve(1); }, 3000)}),
+                new Promise((resolve) => { setTimeout(() => { resolve(2); }, 1000)}),
+                new Promise((resolve) => { setTimeout(() => { resolve(3); }, 2000)})
             ];
 
-            _Promise.all(promises).then(result => expect(result).toEqual(promises));
+            return _Promise.all(promises).then(result => expect(result).toEqual([1, 2, 3]));
         });
     });
 
     describe("race", () => {
-        it("should return first rejected element that the first element rejected the others resolve", () => {
+        it("should resolve the returned promise when the all promises get's resolved and " +
+            "the second promise get's resolved time is the earliest. ", () => {
 
             let promises = [
-                Promise.reject(),
-                Promise.resolve(1),
-                Promise.resolve(2)
+                new Promise((resolve) => { setTimeout(() => { resolve(1); }, 3000)}),
+                new Promise((resolve) => { setTimeout(() => { resolve(2); }, 1000)}),
+                new Promise((resolve) => { setTimeout(() => { resolve(3); }, 2000)})
             ];
 
-            _Promise.race(promises).catch(result => expect(result).toEqual(promises[0]));
+            return _Promise.race(promises).then(result => expect(result).toEqual(2)).catch(() => {});
         });
 
-        it("should return second rejected element that " +
-            "the second element rejected the others resolved", () => {
+        it("should reject the returned promise when the all promises get's is different and " +
+            "the first promise get's rejected time is the earliest. " , () => {
 
             let promises = [
-                Promise.resolve(1),
-                Promise.reject(),
-                Promise.resolve(2)
+                new Promise((resolve,reject) => { setTimeout(() => { reject(1); }, 1000)}),
+                new Promise((resolve) => { setTimeout(() => { resolve(2); }, 3000)}),
+                new Promise((resolve) => { setTimeout(() => { resolve(3); }, 2000)})
             ];
 
-            _Promise.race(promises).catch(result => expect(result).toEqual(promises[1]));
+            return _Promise.race(promises).then(() => {}).catch(error => expect(error).toEqual(1));
         });
 
-        it("should return last rejected element that the last element rejected the others resolved", () => {
-
+        it("should resolve the returned promise when the all promises get's is different and " +
+            "the last promise get's resolved time is the earliest. " , () => {
             let promises = [
-                Promise.resolve(1),
-                Promise.resolve(2),
-                Promise.reject()
+                new Promise((resolve,reject) => { setTimeout(() => { reject(1); }, 2000)}),
+                new Promise((resolve,reject) => { setTimeout(() => { reject(2); }, 3000)}),
+                new Promise((resolve) => { setTimeout(() => { resolve(3); }, 1000)})
             ];
 
-            _Promise.race(promises).catch(result => expect(result).toEqual(promises[2]));
+            _Promise.race(promises).then(result => expect(result).toEqual(3)).catch(() => {});
         });
-
-        it("should return first resolved element that the all elements which finishing unequal time resolved and " +
-            "first is the earliest resolved" , () => {
-
-            let promises = [
-                setTimeout(function() {
-                    Promise.resolve(1);
-                }, 1000),
-                setTimeout(function() {
-                    Promise.resolve(2);
-                }, 3000),
-                setTimeout(function() {
-                    Promise.resolve(3);
-                }, 2000)
-            ];
-
-            _Promise.race(promises).then(result => expect(result).toEqual(promises[0]));
-        });
-
-        it("should return second resolved element that the all elements which finishing unequal time resolved and " +
-            "second is the earliest resolved" , () => {
+        it("should reject the returned promise when the all promises get's reject and " +
+            "the second promise get's rejected time is the earliest. " , () => {
 
             let promises = [
-                setTimeout(function() {
-                    Promise.resolve(1);
-                }, 2000),
-                setTimeout(function() {
-                    Promise.resolve(2);
-                }, 1000),
-                setTimeout(function() {
-                    Promise.resolve(3);
-                }, 3000)
+                new Promise((resolve,reject) => { setTimeout(() => { reject(1); }, 2000)}),
+                new Promise((resolve,reject) => { setTimeout(() => { reject(2); }, 1000)}),
+                new Promise((resolve,reject) => { setTimeout(() => { reject(3); }, 2000)})
             ];
 
-            _Promise.race(promises).then(result => expect(result).toEqual(promises[1]));
-        });
-        it("should return last resolved element that the all elements which finishing unequal time resolved and " +
-            "last is the earliest resolved" , () => {
-
-            let promises = [
-                setTimeout(function() {
-                    Promise.resolve(1);
-                }, 3000),
-                setTimeout(function() {
-                    Promise.resolve(2);
-                }, 2000),
-                setTimeout(function() {
-                    Promise.resolve(3);
-                }, 1000)
-            ];
-
-            _Promise.race(promises).then(result => expect(result).toEqual(promises[2]));
-        });
-
-        it("should return second resolved element that the second and " +
-            "last elements which finishing equal time resolved and " +
-            "they are earlier than first element ", () => {
-
-            let promises = [
-                setTimeout(function() {
-                    Promise.resolve(1);
-                }, 2000),
-                setTimeout(function() {
-                    Promise.resolve(2);
-                }, 1000),
-                setTimeout(function() {
-                    Promise.resolve(3);
-                }, 1000)
-            ];
-
-            _Promise.race(promises).then(result => expect(result).toEqual(promises[1]));
+            _Promise.race(promises).then(() => {}).catch(error => expect(error).toEqual(2));
         });
     });
 });

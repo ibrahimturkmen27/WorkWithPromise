@@ -10,6 +10,7 @@ const _Promise = {
         return new Promise((resolve, reject) => {
             let succeed = [];
             let successCounter = 0;
+            let isRejected = false;
             promises.forEach(function (promise, index) {
                 promise
                     .then(function (data) {
@@ -20,21 +21,32 @@ const _Promise = {
                         }
                     })
                     .catch(function (error) {
-                        reject(error);
+                        if(!isRejected){
+                            reject(error);
+                            isRejected = true;
+                        }
                     });
+
             });
         });
     },
 
     race : function (promises) {
         return new Promise((resolve, reject) => {
+            let isSettled = false;
             promises.forEach(function (promise) {
                 promise
                     .then(function (data) {
-                        resolve(data);
+                        if(!isSettled){
+                            resolve(data);
+                            isSettled = true;
+                        }
                     })
                     .catch(function (error) {
-                        reject(error);
+                        if(!isSettled){
+                            reject(error);
+                            isSettled = true;
+                        }
                     });
             });
         });
