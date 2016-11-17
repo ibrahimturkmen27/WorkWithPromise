@@ -1,11 +1,9 @@
 /**
- * Created by trkmn27 on 07.11.2016.
+ * Created by trkmn27 on 17.11.2016.
  */
 
 "use strict";
-
 const _Promise = {
-
     all : function (promises) {
         return new Promise((resolve, reject) => {
             let succeed = [];
@@ -21,12 +19,11 @@ const _Promise = {
                         }
                     })
                     .catch(function (error) {
-                        if(!isRejected){
-                            reject(error);
+                        if (!isRejected) {
                             isRejected = true;
+                            reject(error);
                         }
                     });
-
             });
         });
     },
@@ -37,15 +34,15 @@ const _Promise = {
             promises.forEach(function (promise) {
                 promise
                     .then(function (data) {
-                        if(!isSettled){
-                            resolve(data);
+                        if (!isSettled) {
                             isSettled = true;
+                            resolve(data);
                         }
                     })
                     .catch(function (error) {
-                        if(!isSettled){
-                            reject(error);
+                        if (!isSettled) {
                             isSettled = true;
+                            reject(error);
                         }
                     });
             });

@@ -3,20 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
     "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ibrahimturkmen27/WorkWithPromise.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ibrahimturkmen27/WorkWithPromise/issues"
-  },
-  "homepage": "https://github.com/ibrahimturkmen27/WorkWithPromise#readme",
   "devDependencies": {
-    "jest": "^16.0.2"
+    "babel-jest": "^17.0.2",
+    "babel-polyfill": "^6.16.0",
+    "jest": "^17.0.3"
   }
 }
